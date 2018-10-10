@@ -13,56 +13,37 @@ int min(int a,int b)
 {
 	return (a<b?a:b);
 }
-
-bool isMatch(string s,string p)
+int max(int a,int b)
 {
-	int slen=s.length(); //注意里面p、s在string中的数组要-1 
-	int plen=p.length();  //
-	int i=0;
-	int j;
-	int count=0;
-	while(i<plen)
-	{
-		if(p[i]=='*')
-		{
-			count++;
-		}
-		i++;
-	}
-	if(slen<(plen-count))
-	{
-		return false;
-	}
-	vector<bool> pre(plen+1,false);//pre与cur中下标是从1开始，指的是s或p的下标 
-	pre[0]=true;
-	for(j=1;j<=plen;j++)
-	{
-		pre[j]=pre[j-1]&&(p[j-1]=='*');
-	}
-	for(i=1;i<=slen;i++)
-	{
-		vector<bool> cur(plen+1,false);
-		for(int j=1;j<=plen;j++)
-		{
-			if(p[j-1]=='*')
-			{
-				cur[j]=cur[j-1]||pre[j];
-			}
-			else
-			{
-				cur[j]=pre[j-1]&&(s[i-1]==p[j-1]||p[j-1]=='?');
-			}
-		}
-		pre=cur;
-	}
-	return pre[plen];
+	return (a>b?a:b);
 }
 
+    int maxProfit(vector<int> prices) {
+    	
+        int length=prices.size();
+        //cout<<length;
+        int buyin=prices[0];//买入点越低越好 
+		int profit=0; 
+        for(int i=1;i<length;i++)
+        {
+        	profit=max(profit,prices[i]-buyin);
+        	buyin=min(buyin,prices[i]);
+		}
+		return profit;
+    }
+
 int main(int argc, char** argv) {
-string s;
-string p;
-cin>>s;
-cin>>p;
-cout<<isMatch(s,p);	
+	vector<int> prices;
+	int n;
+	cin>>n;
+	int i,temp;
+	for(i=0;i<n;i++)
+	{
+	cin>>temp;
+	prices.push_back(temp);
+	}
+	
+	cout<<maxProfit(prices)<<endl;
 	return 0;
+	
 }
