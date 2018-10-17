@@ -18,55 +18,33 @@ int max(int a,int b)
 	return (a>b?a:b);
 }
 
-    int maxProfit(int k,vector<int> prices) { 
-		int profit=0;
-		int size=prices.size();
-		if(size<2)
-		{
-			return 0;
+    int maxProfit(vector<int> prices) { 
+    vector<int> holdstack;
+    vector<int> emptystack;
+    int days=prices.size();
+    if(days<2)
+    	return 0;
+    int i,j;
+    holdstack.assign(days+1,0);
+    emptystack.assign(days+1,0);
+    holdstack[0]=-prices[0];
+   for(i=1;i<days;i++)
+    {
+    	if(i==1)
+    	{
+    		holdstack[i]=max(-prices[0],-prices[i]);//持有  买之前要冷静一天 
 		}
-		int i,j;
-		//当买卖次数>股票数时  特殊讨论 
-		if(k>=size)
+		else
 		{
-			int profit=0;
-			for(i=1;i<size;i++)
-			{
-				if(prices[i]>prices[i-1])
-				{
-					profit=profit+prices[i]-prices[i-1];
-				}
-			}
-			return profit;
-		}
-		vector<int> global[2];
-		vector<int> local[2];
-		for(i=0;i<2;i++)
-		{
-			local[i].assign(k+1,0);
-			global[i].assign(k+1,0);
-		}
+			holdstack[i]=max(holdstack[i-1],emptystack[i-2]-prices[i]);
+		} 
+	
+    	emptystack[i]=max(emptystack[i-1],holdstack[i-1]+prices[i]);
+    	//cout<<"holdstack"<<i<<": "<<holdstack[i]<<endl;
+    	//cout<<"emptystack"<<i<<": "<<emptystack[i]<<endl;
+	}
 
-		int flag=0;
-
-		for(i=1;i<size;i++)
-		{
-			
-				flag=(flag+1)%2;
-			for(j=1;j<=k;j++)
-			{
-				int diff=prices[i]-prices[i-1];
-			
-				local[flag][j]=max(global[1-flag][j-1]+max(diff,0),local[1-flag][j]+diff);
-				global[flag][j]=max(local[flag][j],global[1-flag][j]);	
-			//	cout<<"localarr"<<i<<j<<": "<<local[flag][j]<<endl;
-			//	cout<<"globalar: "<<i<<j<<": "<<global[flag][j]<<endl;
-			}
-		}
-		
-
-		
-		return global[flag][k];
+	 return emptystack[days-1];
     }
 
 int main(int argc, char** argv) {
@@ -81,7 +59,7 @@ int main(int argc, char** argv) {
 	}
 	int k;
 	cin>>k;
-	cout<<maxProfit(k,prices)<<endl;
+	cout<<maxProfit(prices)<<endl;
 	return 0;
 	
 }
