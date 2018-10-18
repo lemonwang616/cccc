@@ -18,48 +18,42 @@ int max(int a,int b)
 	return (a>b?a:b);
 }
 
-    int maxProfit(vector<int> prices) { 
-    vector<int> holdstack;
-    vector<int> emptystack;
-    int days=prices.size();
-    if(days<2)
-    	return 0;
-    int i,j;
-    holdstack.assign(days+1,0);
-    emptystack.assign(days+1,0);
-    holdstack[0]=-prices[0];
-   for(i=1;i<days;i++)
-    {
-    	if(i==1)
-    	{
-    		holdstack[i]=max(-prices[0],-prices[i]);//持有  买之前要冷静一天 
-		}
-		else
-		{
-			holdstack[i]=max(holdstack[i-1],emptystack[i-2]-prices[i]);
-		} 
-	
-    	emptystack[i]=max(emptystack[i-1],holdstack[i-1]+prices[i]);
-    	//cout<<"holdstack"<<i<<": "<<holdstack[i]<<endl;
-    	//cout<<"emptystack"<<i<<": "<<emptystack[i]<<endl;
+    int numDistinct(string s,string t) { 
+    //special case  s or t is null
+	if(s.empty()||t.empty())
+	{
+		return 0;	
+	} 
+	int slen=s.length();
+	int tlen=t.length();
+	if(slen<tlen)
+	{
+		return 0;
 	}
-
-	 return emptystack[days-1];
-    }
+	vector <vector<int> > dp(slen+1,vector<int>(tlen+1,0));
+//	int dp[slen+1][tlen+1];
+	int i,j;
+	for(i=0;i<=slen;i++)
+	{
+		dp[i][0]=1;//表示当t中取空字符串时，每次s都只有一种方法 
+	}
+	for(i=1;i<=slen;i++)
+	{
+		for(j=1;j<=tlen;j++)
+		{
+			dp[i][j]=dp[i-1][j]+(s[i-1]==t[j-1]?dp[i-1][j-1]:0);
+		}
+	
+	}
+	return dp[slen][tlen];
+  }
 
 int main(int argc, char** argv) {
-	vector<int> prices;
-	int n;
-	cin>>n;
-	int i,temp;
-	for(i=0;i<n;i++)
-	{
-	cin>>temp;
-	prices.push_back(temp);
-	}
-	int k;
-	cin>>k;
-	cout<<maxProfit(prices)<<endl;
+	string s;
+	string t;
+	cin>>s;
+	cin>>t;
+	cout<<numDistinct(s,t);
 	return 0;
 	
 }
